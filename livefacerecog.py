@@ -5,6 +5,10 @@ import numpy as np
 import face_recognition
 import os
 import urllib.request
+from firebase import firebase
+
+fb = firebase.FirebaseApplication('https://bantaybaby-ee224-default-rtdb.firebaseio.com/', None)
+
 
 #initialization of path of the folder to a variable
 path = r'faceimages2'
@@ -56,7 +60,7 @@ encodeListKnown = findEncondings(images, className)
 print('Encoding Complete')
 
 # initialization of video capture. PS change the number '0' to any number corresponding to what camera you want to use
-cap = cv2.VideoCapture(url)
+cap = cv2.VideoCapture(0)
 
 #function if real or fake person
 def is_face_moving(prev_face_locations, current_face_locations):
@@ -75,11 +79,13 @@ def is_face_moving(prev_face_locations, current_face_locations):
 prev_face_locations = []
 
 while True:
-    img_resp = urllib.request.urlopen(url)
-    imgnp = np.array(bytearray(img_resp.read()), dtype=np.uint8)
-    img = cv2.imdecode(imgnp, -1)
+    success, img = cap.read()
+    #img_resp = urllib.request.urlopen(url)
+    #imgnp = np.array(bytearray(img_resp.read()), dtype=np.uint8)
+    #img = cv2.imdecode(imgnp, -1)
     imgSmall = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
     imgSmall = cv2.cvtColor(imgSmall, cv2.COLOR_BGR2RGB)
+    fb.put('/SENSORS', 'Faces', 0)
     
     faceCurrentFrame = face_recognition.face_locations(imgSmall)
     encodeCurrentFrame = face_recognition.face_encodings(imgSmall, faceCurrentFrame)
@@ -97,8 +103,9 @@ while True:
     for encodeFace, faceLoc in zip(encodeCurrentFrame, faceCurrentFrame):
         matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
         faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-
+    
         if any(face_distance < 0.6 for face_distance in faceDis):
+            faces_detected = True
             matchIndex = np.argmin(faceDis)
             confidence = (1 - faceDis[matchIndex]) * 100  # Confidence level in percentage
 
@@ -106,10 +113,11 @@ while True:
                 name = "Unknown"
                 confidence_text = f"Confidence: {confidence:.2f}% (Below Threshold)"
                 blurriness_text = ""
+                fb.put('/SENSORS', 'Faces', 2)
             elif matches[matchIndex]:
-                name = className[matchIndex].upper()
+                name = "Household Member"
                 confidence_text = f"Confidence: {confidence:.2f}%"
-                
+                fb.put('/SENSORS', 'Faces', 1)
                 # Calculate blurriness
                 gray_face = cv2.cvtColor(imgSmall, cv2.COLOR_RGB2GRAY)
                 laplacian_var = cv2.Laplacian(gray_face, cv2.CV_64F).var()
@@ -118,6 +126,7 @@ while True:
                 name = "Unknown"
                 confidence_text = f"Confidence: {confidence:.2f}% (Below Threshold)"
                 blurriness_text = ""
+            
 
             # Draw rectangle with different colors for potential spoofing
             y1, x2, y2, x1 = faceLoc
