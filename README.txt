@@ -1,3 +1,5 @@
+A Baby Monitoring System based on ESP 8266 with various sensors such as DHT-11 sensor, Sound Sensor, Color Sensor, PIR Motion Sensor, and Face Recognition System connected to KODULAR.IO based mobile application.
+
 Requirements the codes
 
 1. Requires 64-bit python
