@@ -24,6 +24,7 @@ SIGN-UP PAGE:
 ![image](https://github.com/KertJustineMarquez/BantayBaby-Baby-Monitoring-System/assets/90561007/94f977a3-dc33-4be9-add3-d9b660f8da55)
 
 DASHBOARD:
-![419710264_346862404806184_4291203202825179832_n](https://github.com/KertJustineMarquez/BantayBaby-Baby-Monitoring-System/assets/90561007/d3e4e5e3-b16c-4b81-9ff4-12d07cc8534d)
+![419710264_346862404806184_4291203202825179832_n](https://github.com/KertJustineMarquez/BantayBaby-Baby-Monitoring-System/assets/90561007/3bc0e8a3-84d5-42a1-8f30-5eae0062c420)
+
 
 
